@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}AgriPredict AI - Smart Crop Classification & Recommendation System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="container hero-content">
+    <div class="badge badge-green" style="margin-bottom: 16px;">
+      <span>🌱</span> Next-Gen Smart Agriculture
+    </div>
+    <h1>
+      Smart Crop Recommendations Powered by <span class="text-gradient">Machine Learning</span>
+    </h1>
+    <p class="hero-description">
+      Analyze soil and environmental conditions and get an intelligent crop recommendation based on a trained Random Forest machine learning model.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('predict_page') }}" class="btn btn-primary btn-lg" id="heroPredictBtn">
+        🌾 Predict Crop
+      </a>
+      <a href="{{ url_for('how_it_works_page') }}" class="btn btn-secondary btn-lg" id="heroHowBtn">
+        ⚙️ How It Works
+      </a>
+    </div>
+
+    <!-- Quick stats badge row -->
+    <div style="margin-top: 40px; display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;">
+      <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(8px); padding: 10px 20px; border-radius: 9999px; border: 1px solid var(--border); font-size: 0.85rem; font-weight: 600;">
+        🔬 <strong>7</strong> Soil &amp; Climate Metrics
+      </div>
+      <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(8px); padding: 10px 20px; border-radius: 9999px; border: 1px solid var(--border); font-size: 0.85rem; font-weight: 600;">
+        🌾 <strong>22</strong> Crop Varieties
+      </div>
+      <div style="background: rgba(255,255,255,0.7); backdrop-filter: blur(8px); padding: 10px 20px; border-radius: 9999px; border: 1px solid var(--border); font-size: 0.85rem; font-weight: 600;">
+        ⚡ <strong>99.32%</strong> Model Test Accuracy
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Small Feature Cards Section -->
+<section class="features-section">
+  <div class="container">
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon-wrapper feature-icon-green">🤖</div>
+        <h3>AI Powered</h3>
+        <p>Uses an ensemble of decision trees to evaluate multivariate non-linear agricultural factors with high precision.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper feature-icon-blue">🧪</div>
+        <h3>7 Agricultural Parameters</h3>
+        <p>Evaluates soil N, P, K, pH along with environmental temperature, relative humidity, and precipitation rainfall.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper feature-icon-purple">🌲</div>
+        <h3>Random Forest Model</h3>
+        <p>Built with 100 estimator trees to prevent overfitting and ensure robust, stable classification outcomes.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon-wrapper feature-icon-gold">⚡</div>
+        <h3>Instant Prediction</h3>
+        <p>Sub-millisecond inference delivers immediate agronomic guidance with zero latency or complex setup.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Supported Crops Showcase -->
+<section style="padding: 20px 0 70px; background: #ffffff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container" style="text-align: center;">
+    <div class="badge badge-blue" style="margin-bottom: 12px;">Extensive Coverage</div>
+    <h2 style="font-size: 2rem; margin-bottom: 12px;">22 Supported Agricultural Crops</h2>
+    <p style="color: var(--text-muted); max-width: 650px; margin: 0 auto 36px; font-size: 0.95rem;">
+      From staple food grains and high-protein pulses to tropical fruits and high-value cash crops.
+    </p>
+
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 900px; margin: 0 auto;">
+      {% set crops = [
+        ('🌾', 'Rice'), ('🌽', 'Maize'), ('🧆', 'Chickpea'), ('🫘', 'Kidneybeans'),
+        ('🌱', 'Pigeonpeas'), ('🌿', 'Mothbeans'), ('🫛', 'Mungbean'), ('🪴', 'Blackgram'),
+        ('🥣', 'Lentil'), ('🍎', 'Pomegranate'), ('🍌', 'Banana'), ('🥭', 'Mango'),
+        ('🍇', 'Grapes'), ('🍉', 'Watermelon'), ('🍈', 'Muskmelon'), ('🍏', 'Apple'),
+        ('🍊', 'Orange'), ('🫐', 'Papaya'), ('🥥', 'Coconut'), ('☁️', 'Cotton'),
+        ('🌾', 'Jute'), ('☕', 'Coffee')
+      ] %}
+      {% for icon, name in crops %}
+        <span style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: #f8fafc; border: 1px solid var(--border); border-radius: 9999px; font-size: 0.88rem; font-weight: 600; color: var(--text-main);">
+          <span>{{ icon }}</span> {{ name }}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Call to Action Section -->
+<section style="padding: 70px 0; background: linear-gradient(135deg, #15803d 0%, #166534 100%); color: #ffffff; text-align: center;">
+  <div class="container">
+    <h2 style="color: #ffffff; font-size: 2.3rem; margin-bottom: 14px;">Ready to optimize your crop recommendation?</h2>
+    <p style="color: #bbf7d0; max-width: 600px; margin: 0 auto 28px; font-size: 1.05rem;">
+      Input your soil chemistry test and regional weather forecast to identify the crop best adapted to your field.
+    </p>
+    <a href="{{ url_for('predict_page') }}" class="btn btn-secondary btn-lg" style="color: #15803d; font-weight: 700;">
+      Start Crop Analysis Now →
+    </a>
+  </div>
+</section>
+{% endblock %}

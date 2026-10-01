@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up - AgriPredict AI</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body style="margin: 0; padding: 0; background: #ffffff;">
+
+  <div class="auth-split-wrapper">
+    <!-- Left Banner -->
+    <div class="auth-banner">
+      <div class="auth-banner-brand">
+        <div class="brand-icon">🌱</div>
+        <div>AgriPredict <span>AI</span></div>
+      </div>
+
+      <div class="auth-banner-content">
+        <div class="badge badge-green" style="margin-bottom: 16px; background: rgba(74, 222, 128, 0.2); color: #86efac; border: 1px solid rgba(134, 239, 172, 0.3);">
+          ✨ Join the AgriPredict AI Platform
+        </div>
+        <h1>Empower Your Farming with Machine Learning</h1>
+        <p>
+          Create a personalized account to run crop recommendations, track longitudinal prediction history, and access statistical insights.
+        </p>
+
+        <ul class="auth-banner-features">
+          <li>
+            <span>✓</span> User-specific prediction history stored securely in SQLite
+          </li>
+          <li>
+            <span>✓</span> One-click crop recommendation inference engine
+          </li>
+          <li>
+            <span>✓</span> Instant agronomic insights and crop profiles
+          </li>
+          <li>
+            <span>✓</span> Academic &amp; professional presentation-ready interface
+          </li>
+        </ul>
+      </div>
+
+      <div class="auth-banner-footer">
+        &copy; {{ current_year }} AgriPredict AI System. All data securely hashed and managed.
+      </div>
+    </div>
+
+    <!-- Right Side Signup Form -->
+    <div class="auth-form-side" style="position: relative;">
+      <!-- Top-Right Prasnnacreates Branding -->
+      <div style="position: absolute; top: 24px; right: 28px;">
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="prasnna-brand" title="Created & Designed by Prasnnacreates" id="signupPrasnnaLogo">
+          <div class="prasnna-icon">✨</div>
+          <div class="prasnna-text">Prasnna<span>creates</span></div>
+        </a>
+      </div>
+
+      <div class="auth-card" style="margin-top: 30px;">
+        <div class="auth-card-header">
+          <div style="font-size: 2rem; margin-bottom: 8px;">🚀</div>
+          <h2>Create Account</h2>
+          <p>Join AgriPredict AI to manage and run smart crop predictions.</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="disclaimer-box" style="margin-bottom: 20px; {% if category == 'error' %}background: #fee2e2; border-color: #fca5a5; color: #991b1b;{% elif category == 'success' %}background: #dcfce7; border-color: #86efac; color: #166534;{% endif %}">
+                <span>{% if category == 'error' %}⚠️{% else %}✅{% endif %}</span>
+                <div>{{ message }}</div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('signup_post') }}" method="POST">
+          <div class="auth-input-group">
+            <label for="full_name">Full Name</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">👤</span>
+              <input type="text" id="full_name" name="full_name" class="auth-input" placeholder="e.g. Dr. Jane Doe" value="{{ form_data.full_name if form_data else '' }}" required autofocus>
+            </div>
+          </div>
+
+          <div class="auth-input-group">
+            <label for="email">Email Address</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">✉️</span>
+              <input type="email" id="email" name="email" class="auth-input" placeholder="e.g. jane@agripredict.ai" value="{{ form_data.email if form_data else '' }}" required>
+            </div>
+          </div>
+
+          <div class="auth-input-group">
+            <label for="username">Username</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">🏷️</span>
+              <input type="text" id="username" name="username" class="auth-input" placeholder="e.g. janedoe" value="{{ form_data.username if form_data else '' }}" required>
+            </div>
+          </div>
+
+          <div class="auth-input-group">
+            <label for="password">Password</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">🔒</span>
+              <input type="password" id="password" name="password" class="auth-input" placeholder="Minimum 6 characters" required>
+            </div>
+          </div>
+
+          <div class="auth-input-group">
+            <label for="confirm_password">Confirm Password</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">🛡️</span>
+              <input type="password" id="confirm_password" name="confirm_password" class="auth-input" placeholder="Repeat password" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 10px;" id="signupBtn">
+            Create Account →
+          </button>
+        </form>
+
+        <div class="auth-footer-text">
+          Already have an account? <a href="{{ url_for('login_page') }}">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

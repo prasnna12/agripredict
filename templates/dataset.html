@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Dataset Analysis - AgriPredict AI{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-bottom: 70px;">
+  <div class="page-header">
+    <div class="badge badge-green" style="margin-bottom: 8px;">Empirical Agronomic Data</div>
+    <h1>Crop Recommendation Dataset</h1>
+    <p>Comprehensive overview, descriptive statistics, and class distribution computed dynamically from <code>Crop_recommendation.csv</code>.</p>
+  </div>
+
+  <!-- Dataset Stats Metric Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #dcfce7; color: #166534;">📄</div>
+      <div class="stat-data">
+        <h4>Total Observations</h4>
+        <p>{{ dataset_stats.total_rows }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #e0f2fe; color: #0369a1;">📐</div>
+      <div class="stat-data">
+        <h4>Total Columns</h4>
+        <p>{{ dataset_stats.total_cols }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #fef3c7; color: #92400e;">🌾</div>
+      <div class="stat-data">
+        <h4>Unique Crops</h4>
+        <p>{{ dataset_stats.unique_crops_count }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #f3e8ff; color: #6b21a8;">⚖️</div>
+      <div class="stat-data">
+        <h4>Class Balance</h4>
+        <p style="font-size: 1.15rem; line-height: 1.2;">100 / Crop (100% Balanced)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Chart.js: Crop Distribution -->
+  <div class="card" style="margin-bottom: 32px; padding: 28px;">
+    <h3 class="card-title">
+      <span>📊</span> Crop Class Distribution
+    </h3>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
+      Sample count per target crop class within the benchmark dataset (22 classes, 100 samples each):
+    </p>
+    <div style="height: 320px; position: relative;">
+      <canvas id="cropDistChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Feature Statistical Summary Table -->
+  <div class="card" style="margin-bottom: 32px; padding: 28px;">
+    <h3 class="card-title">
+      <span>📐</span> Feature Statistical Summary
+    </h3>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
+      Empirical summary statistics calculated directly from the training dataset:
+    </p>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Feature Name</th>
+            <th>Code</th>
+            <th>Units</th>
+            <th>Min</th>
+            <th>Mean</th>
+            <th>Median (50%)</th>
+            <th>Max</th>
+            <th>Std Dev</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for stat in dataset_stats.feature_stats %}
+            <tr>
+              <td style="font-weight: 700;">{{ stat.display_name }}</td>
+              <td><code>{{ stat.feature }}</code></td>
+              <td><span class="badge badge-blue">{{ stat.unit }}</span></td>
+              <td>{{ stat.min }}</td>
+              <td>{{ stat.mean }}</td>
+              <td>{{ stat.median }}</td>
+              <td>{{ stat.max }}</td>
+              <td>{{ stat.std }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Dataset Sample Preview Table -->
+  <div class="card" style="padding: 28px;">
+    <h3 class="card-title">
+      <span>🔍</span> Dataset Sample Preview (First 15 Rows)
+    </h3>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nitrogen (N)</th>
+            <th>Phosphorus (P)</th>
+            <th>Potassium (K)</th>
+            <th>Temperature (°C)</th>
+            <th>Humidity (%)</th>
+            <th>pH</th>
+            <th>Rainfall (mm)</th>
+            <th>Target Label</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in dataset_stats.sample_preview %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ row.N }}</td>
+              <td>{{ row.P }}</td>
+              <td>{{ row.K }}</td>
+              <td>{{ "%.2f"|format(row.temperature) }}</td>
+              <td>{{ "%.2f"|format(row.humidity) }}</td>
+              <td>{{ "%.2f"|format(row.ph) }}</td>
+              <td>{{ "%.2f"|format(row.rainfall) }}</td>
+              <td><span class="crop-tag">🌾 {{ row.label.capitalize() }}</span></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const ctx = document.getElementById('cropDistChart');
+    if (ctx) {
+      const labels = {{ dataset_stats.crop_counts.keys() | list | tojson }};
+      const dataValues = {{ dataset_stats.crop_counts.values() | list | tojson }};
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels.map(c => c.charAt(0).toUpperCase() + c.slice(1)),
+          datasets: [{
+            label: 'Samples in Dataset',
+            data: dataValues,
+            backgroundColor: '#15803d',
+            hoverBackgroundColor: '#166534',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return ` Samples: ${context.parsed.y}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { maxRotation: 45, minRotation: 45, font: { size: 11 } }
+            },
+            y: {
+              beginAtZero: true,
+              max: 120,
+              ticks: { stepSize: 20 }
+            }
+          }
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

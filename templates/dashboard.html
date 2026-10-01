@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - AgriPredict AI{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 30px; padding-bottom: 70px;">
+  <!-- Welcome Banner -->
+  <div style="background: linear-gradient(135deg, #15803d 0%, #166534 100%); border-radius: var(--radius-lg); padding: 36px 40px; color: #ffffff; margin-bottom: 32px; box-shadow: var(--shadow-emerald); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+    <div>
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); padding: 4px 14px; border-radius: 9999px; font-size: 0.85rem; font-weight: 600; margin-bottom: 12px;">
+        <span>🌱</span> Connected User: <strong>{{ current_user.username }}</strong>
+      </div>
+      <h1 style="color: #ffffff; font-size: 2.2rem; letter-spacing: -0.02em; margin-bottom: 8px;">
+        Welcome back, {{ current_user.full_name }}
+      </h1>
+      <p style="color: #bbf7d0; font-size: 1.05rem; max-width: 650px; margin: 0;">
+        Analyze agricultural conditions and get machine-learning-based crop recommendations.
+      </p>
+    </div>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <a href="{{ url_for('predict_page') }}" class="btn btn-secondary btn-lg" style="color: #15803d; font-weight: 700; background: #ffffff;">
+        🌾 Predict Crop
+      </a>
+      <a href="{{ url_for('profile_page') }}" class="btn btn-outline btn-lg" style="color: #ffffff; border-color: rgba(255,255,255,0.6);">
+        👤 Profile
+      </a>
+    </div>
+  </div>
+
+  <!-- Summary Metric Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #dcfce7; color: #166534;">📈</div>
+      <div class="stat-data">
+        <h4>Total Predictions</h4>
+        <p>{{ stats.total_predictions }}</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #e0f2fe; color: #0369a1;">🕒</div>
+      <div class="stat-data">
+        <h4>Latest Prediction</h4>
+        <p style="font-size: 1.25rem;">
+          {% if stats.latest_prediction %}
+            {{ stats.latest_prediction.predicted_crop.capitalize() }}
+          {% else %}
+            None Yet
+          {% endif %}
+        </p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #fef3c7; color: #92400e;">🌾</div>
+      <div class="stat-data">
+        <h4>Crop Classes</h4>
+        <p style="font-size: 1.35rem;">22 Varieties</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon" style="background: #f3e8ff; color: #6b21a8;">🤖</div>
+      <div class="stat-data">
+        <h4>Model Type</h4>
+        <p style="font-size: 1.1rem; line-height: 1.2;">Random Forest (100 Trees)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Dashboard Hub (100% CLICKABLE CARDS) -->
+  <div class="dashboard-hub-section">
+    <div class="dashboard-hub-header">
+      <div>
+        <h2 style="font-size: 1.6rem; letter-spacing: -0.01em;">Application Hub &amp; Features</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Select any module below to launch the corresponding feature.</p>
+      </div>
+      <span class="badge badge-green">All 7 Sections Active &amp; Clickable</span>
+    </div>
+
+    <div class="dashboard-hub-grid">
+      <!-- 1. Crop Prediction -->
+      <a href="{{ url_for('predict_page') }}" class="dashboard-hub-card" id="hubPredictCard">
+        <div class="hub-card-top">
+          <div class="hub-card-icon" style="background: #dcfce7; color: #166534;">🌾</div>
+          <span class="badge badge-green">Core Inference</span>
+        </div>
+        <div class="hub-card-title">1. Crop Prediction</div>
+        <div class="hub-card-desc">
+          Input your 7 soil and climate parameters to generate an instant, data-driven crop recommendation.
+        </div>
+        <div class="hub-card-action">
+          <span>Open Prediction Form</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <!-- 2. Prediction History -->
+      <a href="{{ url_for('history_page') }}" class="dashboard-hub-card" id="hubHistoryCard">
+        <div class="hub-card-top">
+          <div class="hub-card-icon" style="background: #e0f2fe; color: #0369a1;">🕒</div>
+          <span class="badge badge-blue">User History</span>
+        </div>
+        <div class="hub-card-title">2. Prediction History</div>
+        <div class="hub-card-desc">
+          Review your personal historical crop evaluations, input summaries, and chronological records.
+        </div>
+        <div class="hub-card-action">
+          <span>View History Table</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <!-- 3. Dataset Explorer -->
+      <a href="{{ url_for('dataset_page') }}" class="dashboard-hub-card" id="hubDatasetCard">
+        <div class="hub-card-top">
+          <div class="hub-card-icon" style="background: #fef3c7; color: #92400e;">📊</div>
+          <span class="badge badge-gold">2,200 Records</span>
+        </div>
+        <div class="hub-card-title">3. Dataset Explorer</div>
+        <div class="hub-card-desc">
+          Explore benchmark agricultural data, statistical distributions, and class balance across 22 crops.
+        </div>
+        <div class="hub-card-action">
+          <span>Explore Dataset</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <!-- 4. ML Model -->
+      <a href="{{ url_for('model_page') }}" class="dashboard-hub-card" id="hubModelCard">
+        <div class="hub-card-top">
+          <div class="hub-card-icon" style="background: #f3e8ff; color: #7e22ce;">🌲</div>
+          <span class="badge badge-purple">99.32% Accuracy</span>
+        </div>
+        <div class="hub-card-title">4. ML Model Info</div>
+        <div class="hub-card-desc">
+          Discover Random Forest ensemble architecture, Gini feature importance, and empirical test scores.
+        </div>
+        <div class="hub-card-action">
+          <span>Inspect ML Model</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <!-- 5. How It Works -->
+      <a href="{{ url_for('how_it_works_page') }}" class="dashboard-hub-card" id="hubHowItWorksCard">
+        <div class="hub-card-top">
+          <div class="hub-card-icon" style="background: #dcfce7; color: #15803d;">⚙️</div>
+          <span class="badge badge-green">5-Step Pipeline</span>
+        </div>
+        <div class="hub-card-title">5. How It Works</div>
+        <div class="hub-card-desc">
+          Follow the transparent 5-step machine learning workflow from raw field data to recommendation.
+        </div>
+        <div class="hub-card-action">
+          <span>View Visual Workflow</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <!-- 6. About Project -->
+      <a href="{{ url_for('about_page') }}" class="dashboard-hub-card" id="hubAboutCard">
+        <div class="hub-card-top">
+          <div class="hub-card-icon" style="background: #e0f2fe; color: #0284c7;">ℹ️</div>
+          <span class="badge badge-blue">Academic Showcase</span>
+        </div>
+        <div class="hub-card-title">6. About Project</div>
+        <div class="hub-card-desc">
+          Read about the project objective, benefits, architecture stack, limitations, and developer contact.
+        </div>
+        <div class="hub-card-action">
+          <span>Learn About System</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+
+      <!-- 7. Profile -->
+      <a href="{{ url_for('profile_page') }}" class="dashboard-hub-card" id="hubProfileCard" style="grid-column: span 1;">
+        <div class="hub-card-top">
+          <div class="hub-card-icon" style="background: #f1f5f9; color: #0f172a;">👤</div>
+          <span class="badge badge-green">Account</span>
+        </div>
+        <div class="hub-card-title">7. User Profile</div>
+        <div class="hub-card-desc">
+          Manage your account details, registration info, personal stats, and session logout.
+        </div>
+        <div class="hub-card-action">
+          <span>Go to Profile</span>
+          <span class="arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Recent Predictions Table for Current User -->
+  <div class="card" style="margin-top: 40px; padding: 28px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h3 class="card-title" style="margin-bottom: 4px; border: none; padding: 0;">
+          <span>📋</span> Recent Predictions by {{ current_user.full_name }}
+        </h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Showing your latest agricultural evaluations.</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <a href="{{ url_for('history_page') }}" class="btn btn-secondary btn-sm">
+          View All History ({{ stats.total_predictions }}) →
+        </a>
+      </div>
+    </div>
+
+    {% if predictions and predictions|length > 0 %}
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date / Time</th>
+              <th>Nitrogen (N)</th>
+              <th>Phosphorus (P)</th>
+              <th>Potassium (K)</th>
+              <th>Temp (°C)</th>
+              <th>Humidity (%)</th>
+              <th>Soil pH</th>
+              <th>Rainfall (mm)</th>
+              <th>Recommended Crop</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in predictions[:10] %}
+              <tr>
+                <td>#{{ item.id }}</td>
+                <td style="color: var(--text-muted); font-size: 0.85rem;">{{ item.created_at }}</td>
+                <td>{{ item.nitrogen }}</td>
+                <td>{{ item.phosphorus }}</td>
+                <td>{{ item.potassium }}</td>
+                <td>{{ item.temperature }}</td>
+                <td>{{ item.humidity }}</td>
+                <td>{{ item.ph }}</td>
+                <td>{{ item.rainfall }}</td>
+                <td>
+                  <span class="crop-tag">
+                    🌾 {{ item.predicted_crop.capitalize() }}
+                  </span>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+        <div style="font-size: 3rem; margin-bottom: 12px;">🌾</div>
+        <h4 style="font-size: 1.15rem; color: var(--text-main); margin-bottom: 6px;">No Predictions Yet</h4>
+        <p style="font-size: 0.925rem; margin-bottom: 20px;">Use the crop recommendation tool to analyze your first soil parameters.</p>
+        <a href="{{ url_for('predict_page') }}" class="btn btn-primary btn-sm">
+          Run First Prediction →
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Crop Prediction Model</title>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url("{{ url_for('static', filename='crop.jpg') }}") no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Quicksand', sans-serif;
+      height: 100vh;
+      color: #fff;
+    }
+
+    nav {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 10;
+    }
+
+    nav h2 {
+      color: #ffeb3b;
+      margin: 0;
+      font-family: 'Baloo 2', cursive;
+      font-size: 24px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      margin-left: 20px;
+      transition: color 0.2s ease-in-out;
+      font-size: 16px;
+    }
+
+    nav a:hover {
+      color: #ffeb3b;
+    }
+
+    .login {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 40px 50px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+      margin: 100px auto 0 auto;
+    }
+
+    .login h1 {
+      font-family: 'Baloo 2', cursive;
+      font-size: 36px;
+      color: #ffeb3b;
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      background-color: #f1f1f1;
+      color: #333;
+    }
+
+    input[type="text"]:focus {
+      outline: 2px solid #ffc107;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      margin-top: 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #388e3c;
+    }
+
+    #predi {
+      color: #fff176;
+      font-size: 24px;
+      margin-top: 30px;
+      font-weight: bold;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <h2>Crop Predictor</h2>
+    <div>
+      <a href="{{ url_for('Home') }}">Home</a>
+    </div>
+  </nav>
+
+  <!-- Main Form -->
+  <div class="login">
+    <h1>Crop Prediction Model</h1>
+
+    <form action="{{ url_for('predict')}}" method="post">
+      enter ppm (parts per million 0-100)
+      <input type="text" name="Nitrogen" placeholder="Nitrogen" required />
+      <input type="text" name="Phosphorus" placeholder="Phosphorus" required />
+      <input type="text" name="Potassium" placeholder="Potassium" required />
+      <input type="text" name="temperature" placeholder="Temperature" required />
+      <input type="text" name="humidity" placeholder="Humidity" required />
+      <input type="text" name="pH" placeholder="pH" required />
+      <input type="text" name="rainfall" placeholder="Rainfall" required />
+      <button type="submit">Predict</button>
+    </form>
+
+    <h1 id="predi">{{ prediction_text }}</h1>
+  </div>
+</body>
+</html>

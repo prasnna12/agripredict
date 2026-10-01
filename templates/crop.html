@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block title %}Crop Recommendation - AgriPredict AI{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div class="badge badge-green" style="margin-bottom: 8px;">Machine Learning Inference</div>
+    <h1>Crop Recommendation</h1>
+    <p>Enter your soil and environmental parameters to identify the most suitable crop.</p>
+  </div>
+
+  <div class="prediction-wrapper">
+    <!-- Main Form Card -->
+    <div class="card" id="formCard">
+      <!-- Quick Demo Presets -->
+      <div class="presets-container">
+        <div class="presets-label">⚡ Quick Sample Presets (Click to autofill):</div>
+        <div class="preset-chips">
+          {% for preset in presets %}
+            <button type="button" class="preset-chip"
+                    data-n="{{ preset.n }}"
+                    data-p="{{ preset.p }}"
+                    data-k="{{ preset.k }}"
+                    data-temp="{{ preset.temperature }}"
+                    data-hum="{{ preset.humidity }}"
+                    data-ph="{{ preset.ph }}"
+                    data-rain="{{ preset.rainfall }}">
+              {{ preset.label }}
+            </button>
+          {% endfor %}
+        </div>
+      </div>
+
+      <form action="{{ url_for('predict_endpoint') }}" method="POST" id="predictionForm" novalidate>
+        <!-- Section 1: Soil Parameters -->
+        <h3 class="card-title">
+          <span>🧪</span> Soil Chemistry Parameters
+        </h3>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="nitrogen">
+              Nitrogen (N)
+              <span class="unit-badge">ratio / ppm</span>
+            </label>
+            <div class="input-with-icon">
+              <span class="input-icon">🌱</span>
+              <input type="number" step="any" min="0" max="200" name="Nitrogen" id="nitrogen"
+                     class="form-input" placeholder="e.g. 90"
+                     value="{{ inputs.Nitrogen if inputs else '' }}" required>
+            </div>
+            <span class="input-hint">Nitrogen ratio in soil (typical: 0 - 140)</span>
+          </div>
+
+          <div class="form-group">
+            <label for="phosphorus">
+              Phosphorus (P)
+              <span class="unit-badge">ratio / ppm</span>
+            </label>
+            <div class="input-with-icon">
+              <span class="input-icon">🔬</span>
+              <input type="number" step="any" min="0" max="200" name="Phosphorus" id="phosphorus"
+                     class="form-input" placeholder="e.g. 42"
+                     value="{{ inputs.Phosphorus if inputs else '' }}" required>
+            </div>
+            <span class="input-hint">Phosphorus ratio in soil (typical: 5 - 145)</span>
+          </div>
+
+          <div class="form-group">
+            <label for="potassium">
+              Potassium (K)
+              <span class="unit-badge">ratio / ppm</span>
+            </label>
+            <div class="input-with-icon">
+              <span class="input-icon">🪵</span>
+              <input type="number" step="any" min="0" max="300" name="Potassium" id="potassium"
+                     class="form-input" placeholder="e.g. 43"
+                     value="{{ inputs.Potassium if inputs else '' }}" required>
+            </div>
+            <span class="input-hint">Potassium ratio in soil (typical: 5 - 205)</span>
+          </div>
+
+          <div class="form-group">
+            <label for="ph">
+              Soil pH
+              <span class="unit-badge">0 - 14 pH</span>
+            </label>
+            <div class="input-with-icon">
+              <span class="input-icon">💧</span>
+              <input type="number" step="any" min="0" max="14" name="pH" id="ph"
+                     class="form-input" placeholder="e.g. 6.50"
+                     value="{{ inputs.pH if inputs else '' }}" required>
+            </div>
+            <span class="input-hint">Soil pH scale (3.5 - 9.0 optimal for crops)</span>
+          </div>
+        </div>
+
+        <!-- Section 2: Environmental Parameters -->
+        <h3 class="card-title" style="margin-top: 32px;">
+          <span>🌦️</span> Environmental &amp; Climatic Parameters
+        </h3>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="temperature">
+              Temperature
+              <span class="unit-badge">°C</span>
+            </label>
+            <div class="input-with-icon">
+              <span class="input-icon">🌡️</span>
+              <input type="number" step="any" min="-10" max="60" name="temperature" id="temperature"
+                     class="form-input" placeholder="e.g. 20.8"
+                     value="{{ inputs.temperature if inputs else '' }}" required>
+            </div>
+            <span class="input-hint">Average regional ambient temperature in Celsius</span>
+          </div>
+
+          <div class="form-group">
+            <label for="humidity">
+              Relative Humidity
+              <span class="unit-badge">%</span>
+            </label>
+            <div class="input-with-icon">
+              <span class="input-icon">🌫️</span>
+              <input type="number" step="any" min="1" max="100" name="humidity" id="humidity"
+                     class="form-input" placeholder="e.g. 82.0"
+                     value="{{ inputs.humidity if inputs else '' }}" required>
+            </div>
+            <span class="input-hint">Atmospheric relative humidity percentage</span>
+          </div>
+
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label for="rainfall">
+              Rainfall
+              <span class="unit-badge">mm</span>
+            </label>
+            <div class="input-with-icon">
+              <span class="input-icon">🌧️</span>
+              <input type="number" step="any" min="0" max="600" name="rainfall" id="rainfall"
+                     class="form-input" placeholder="e.g. 202.9"
+                     value="{{ inputs.rainfall if inputs else '' }}" required>
+            </div>
+            <span class="input-hint">Annual or seasonal rainfall precipitation in millimeters</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 28px;">
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="predictBtn">
+            🌾 Predict Best Crop
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Prediction Result Display -->
+    {% if prediction %}
+      <div class="result-card" id="predictionResultCard">
+        <div class="result-badge">Recommendation Ready</div>
+
+        <div class="crop-display">
+          <span class="crop-display-icon">{{ crop_meta.icon }}</span>
+          <div>
+            <h2 class="crop-display-title">{{ crop_meta.name }}</h2>
+            <div style="font-size: 0.95rem; color: #4b5563; font-style: italic;">
+              {{ crop_meta.scientific_name }}
+            </div>
+          </div>
+        </div>
+
+        <div class="crop-meta-tag">{{ crop_meta.category }}</div>
+
+        {% if confidence %}
+          <div style="margin-bottom: 16px;">
+            <span class="badge badge-green" style="font-size: 0.9rem;">
+              Ensemble Confidence: <strong>{{ confidence }}%</strong>
+            </span>
+          </div>
+        {% endif %}
+
+        <p class="result-explanation">
+          The model identified <strong>{{ crop_meta.name }}</strong> as the recommended crop based on the provided soil and environmental conditions.
+        </p>
+
+        <!-- Agronomic details row -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; text-align: left;">
+          <div style="background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Water Requirement</div>
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">{{ crop_meta.water_req }}</div>
+          </div>
+          <div style="background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Growing Period</div>
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">{{ crop_meta.growing_period }}</div>
+          </div>
+          <div style="background: #ffffff; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Optimal Climate</div>
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--text-main);">{{ crop_meta.climate }}</div>
+          </div>
+        </div>
+
+        <!-- Input Summary Table -->
+        <h4 style="font-size: 0.95rem; margin-top: 24px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em;">
+          Submitted Parameters Summary
+        </h4>
+        <div class="table-responsive">
+          <table class="input-summary-table">
+            <thead>
+              <tr>
+                <th>Nitrogen</th>
+                <th>Phosphorus</th>
+                <th>Potassium</th>
+                <th>Temperature</th>
+                <th>Humidity</th>
+                <th>Soil pH</th>
+                <th>Rainfall</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ inputs.Nitrogen }}</td>
+                <td>{{ inputs.Phosphorus }}</td>
+                <td>{{ inputs.Potassium }}</td>
+                <td>{{ inputs.temperature }} °C</td>
+                <td>{{ inputs.humidity }} %</td>
+                <td>{{ inputs.pH }}</td>
+                <td>{{ inputs.rainfall }} mm</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 14px; justify-content: center; margin-top: 24px; flex-wrap: wrap;">
+          <a href="{{ url_for('predict_page') }}" class="btn btn-outline" id="predictAgainBtn">
+            🔄 Predict Again
+          </a>
+          <a href="{{ url_for('dashboard_page') }}" class="btn btn-primary" id="viewDashboardBtn">
+            📊 View in Dashboard
+          </a>
+        </div>
+
+        <!-- Realism & Agricultural Disclaimer -->
+        <div class="disclaimer-box">
+          <span style="font-size: 1.1rem;">⚠️</span>
+          <div>
+            <strong>Agronomic Advisory Notice:</strong>
+            Machine learning crop recommendations are statistical estimates based on empirical patterns and should not be treated as a guarantee of crop yield or agricultural success. Local soil testing, seed quality, and pest management also play vital roles.
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Model Architecture &amp; Evaluation - AgriPredict AI{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-bottom: 70px;">
+  <div class="page-header">
+    <div class="badge badge-green" style="margin-bottom: 8px;">Scikit-Learn Machine Learning</div>
+    <h1>Machine Learning Model Information</h1>
+    <p>Comprehensive specifications, genuine evaluation metrics, and feature importance of the Random Forest model.</p>
+  </div>
+
+  <!-- Key Specs Overview -->
+  <div class="model-specs-grid">
+    <!-- Specification Card -->
+    <div class="card">
+      <h3 class="card-title">
+        <span>⚙️</span> Model Specifications
+      </h3>
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.925rem;">
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 10px 0; color: var(--text-muted); font-weight: 600;">Algorithm</td>
+          <td style="padding: 10px 0; font-weight: 700; color: var(--text-main); text-align: right;">{{ model_diag.algorithm }}</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 10px 0; color: var(--text-muted); font-weight: 600;">Estimators (Trees)</td>
+          <td style="padding: 10px 0; font-weight: 700; color: var(--text-main); text-align: right;">{{ model_diag.trees_count }} Decision Trees</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 10px 0; color: var(--text-muted); font-weight: 600;">Input Features</td>
+          <td style="padding: 10px 0; font-weight: 700; color: var(--text-main); text-align: right;">{{ model_diag.features|length }} Parameters</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 10px 0; color: var(--text-muted); font-weight: 600;">Target Classes</td>
+          <td style="padding: 10px 0; font-weight: 700; color: var(--text-main); text-align: right;">{{ model_diag.classes_count }} Crops</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 10px 0; color: var(--text-muted); font-weight: 600;">Model Artifact</td>
+          <td style="padding: 10px 0; font-weight: 700; color: var(--text-main); text-align: right;"><code>model.pkl</code></td>
+        </tr>
+        <tr>
+          <td style="padding: 10px 0; color: var(--text-muted); font-weight: 600;">Source Training Set</td>
+          <td style="padding: 10px 0; font-weight: 700; color: var(--text-main); text-align: right;"><code>Crop_recommendation.csv</code></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Genuine Accuracy Card -->
+    <div class="card">
+      <h3 class="card-title">
+        <span>🎯</span> Empirical Accuracy &amp; Validation
+      </h3>
+      {% if model_diag.test_accuracy is not none %}
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 20px; text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #166534; letter-spacing: 0.05em;">
+            Test Set Accuracy (80/20 Train-Test Split)
+          </div>
+          <div style="font-size: 3rem; font-weight: 800; color: #15803d; line-height: 1.1; margin: 8px 0;">
+            {{ model_diag.test_accuracy }}%
+          </div>
+          <div style="font-size: 0.825rem; color: #166534;">
+            Evaluated on {{ model_diag.test_size }} unseen testing samples with fixed random state 42
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; font-size: 0.9rem; padding: 8px 12px; background: var(--surface-alt); border-radius: 8px;">
+          <span style="color: var(--text-muted);">Overall Benchmark Score:</span>
+          <strong>{{ model_diag.overall_accuracy }}%</strong>
+        </div>
+      {% else %}
+        <div style="padding: 30px; text-align: center; color: var(--text-muted);">
+          <h4>Model Evaluation: Not Available</h4>
+          <p>Training dataset could not be accessed to compute evaluation split.</p>
+        </div>
+      {% endif %}
+
+      <div style="margin-top: 20px; font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+        * Accuracy metrics are directly calculated from the verified test split of <code>Crop_recommendation.csv</code> using Scikit-Learn without synthetic inflation.
+      </div>
+    </div>
+  </div>
+
+  <!-- Random Forest Simple Explanation -->
+  <div class="card" style="margin-bottom: 32px; padding: 32px;">
+    <h3 class="card-title">
+      <span>🌲</span> Understanding the Random Forest Algorithm
+    </h3>
+    <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-main); margin-bottom: 16px;">
+      <strong>Random Forest</strong> is an ensemble machine learning algorithm that combines multiple decision trees to make a prediction.
+    </p>
+    <p style="font-size: 0.95rem; line-height: 1.7; color: var(--text-muted);">
+      Instead of relying on a single decision tree that could overfit or be sensitive to noise, Random Forest builds an entire forest of 100 individual decision trees. During training, each tree is trained on a distinct bootstrap sample of the dataset. When predicting a crop, all 100 trees evaluate the seven soil and weather parameters independently. The forest then takes a majority vote (or probability average) across all trees, yielding resilient, highly accurate recommendations.
+    </p>
+  </div>
+
+  <!-- Feature Importance Breakdown -->
+  <div class="card" style="padding: 32px;">
+    <h3 class="card-title">
+      <span>📊</span> Feature Importance (Relative Weight in Decision Making)
+    </h3>
+    <p style="font-size: 0.925rem; color: var(--text-muted); margin-bottom: 24px;">
+      Scikit-learn Gini importance (mean decrease in impurity) quantifying how much each agricultural variable influences the model's split decisions:
+    </p>
+
+    {% for item in model_diag.importances %}
+      <div class="progress-bar-container">
+        <div class="progress-bar-header">
+          <span>{{ item.display_name }} (<code>{{ item.feature }}</code>)</span>
+          <span style="color: var(--primary); font-weight: 700;">{{ item.importance }}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width: {{ item.importance * 3.5 }}%; max-width: 100%;"></div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

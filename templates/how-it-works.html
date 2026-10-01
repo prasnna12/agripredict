@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}How It Works - AgriPredict AI{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-bottom: 70px;">
+  <div class="page-header">
+    <div class="badge badge-green" style="margin-bottom: 8px;">Architecture &amp; Pipeline</div>
+    <h1>How AgriPredict AI Works</h1>
+    <p>A transparent look into the end-to-end Machine Learning pipeline from field data to crop recommendation.</p>
+  </div>
+
+  <!-- 5-Step Visual Stepper -->
+  <div class="stepper-container">
+    <!-- Step 1 -->
+    <div class="step-card">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <div class="badge badge-green" style="margin-bottom: 6px;">Input Ingestion</div>
+        <h3>Step 1 — User Input</h3>
+        <p>
+          The user provides seven key field parameters through the web interface. These comprise four soil chemistry values (Nitrogen, Phosphorus, Potassium, and Soil pH) alongside three atmospheric parameters (regional ambient temperature, relative humidity, and rainfall precipitation).
+        </p>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <div class="badge badge-blue" style="margin-bottom: 6px;">Sanitization &amp; Verification</div>
+        <h3>Step 2 — Data Processing</h3>
+        <p>
+          The application validates the input values against physical, biological, and agronomic bounds (e.g. verifying pH is between 0 and 14, temperature is realistic, and no negative numbers or non-numeric tokens exist). Cleaned features are formatted into a structured Pandas DataFrame matching the model's fitted feature schema.
+        </p>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-card">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <div class="badge badge-green" style="margin-bottom: 6px;">Ensemble Invocation</div>
+        <h3>Step 3 — Machine Learning Model</h3>
+        <p>
+          The inputs are passed to the trained Random Forest Classifier loaded from <code>model.pkl</code>. This model was trained on the benchmark <code>Crop_recommendation.csv</code> dataset using Scikit-learn, consisting of an ensemble of 100 decision trees constructed with bootstrap aggregation.
+        </p>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step-card">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <div class="badge badge-gold" style="margin-bottom: 6px;">Multi-Class Inference</div>
+        <h3>Step 4 — Prediction</h3>
+        <p>
+          The model analyzes the seven parameters simultaneously across all 100 decision trees. Each tree casts an individual vote based on splitting thresholds learned from historical agricultural patterns, and the ensemble aggregates these votes into class probabilities across the 22 target crops.
+        </p>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step-card">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <div class="badge badge-green" style="margin-bottom: 6px;">Actionable Guidance</div>
+        <h3>Step 5 — Crop Recommendation</h3>
+        <p>
+          The system displays the predicted crop along with confidence indicators, botanical classification, growth duration, water requirements, and an input summary table. In parallel, the query is safely logged to the local SQLite database for historical tracking.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Parameter Role Breakdown -->
+  <div class="card" style="max-width: 900px; margin: 0 auto 40px; padding: 32px;">
+    <h3 class="card-title">
+      <span>🌾</span> Role of the 7 Agricultural Parameters
+    </h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px; margin-top: 20px;">
+      <div style="background: var(--surface-alt); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+        <strong style="color: #15803d;">Nitrogen (N):</strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Crucial for leaf growth, chlorophyll formation, and leafy foliage vegetative vigor.</p>
+      </div>
+      <div style="background: var(--surface-alt); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+        <strong style="color: #15803d;">Phosphorus (P):</strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Stimulates early root development, seed germination, flowering, and energy transfer.</p>
+      </div>
+      <div style="background: var(--surface-alt); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+        <strong style="color: #15803d;">Potassium (K):</strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Regulates water stomatal conductance, disease resistance, and fruit/grain quality.</p>
+      </div>
+      <div style="background: var(--surface-alt); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+        <strong style="color: #0284c7;">Temperature (°C):</strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Governs enzymatic rates, photosynthesis, dormancy break, and thermal time accumulation.</p>
+      </div>
+      <div style="background: var(--surface-alt); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+        <strong style="color: #0284c7;">Humidity (%):</strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Affects evapotranspiration, pollen viability, and atmospheric moisture tension.</p>
+      </div>
+      <div style="background: var(--surface-alt); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+        <strong style="color: #15803d;">Soil pH:</strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Controls mineral solubility and micronutrient uptake efficiency across root membranes.</p>
+      </div>
+      <div style="background: var(--surface-alt); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+        <strong style="color: #0284c7;">Rainfall (mm):</strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 4px;">Direct seasonal water budget available to sustain vegetative transpiration cycles.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align: center;">
+    <a href="{{ url_for('predict_page') }}" class="btn btn-primary btn-lg">
+      Try AgriPredict AI Now →
+    </a>
+  </div>
+</div>
+{% endblock %}

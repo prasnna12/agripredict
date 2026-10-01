@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AgriPredict AI - Smart Crop Classification & Recommendation System powered by Machine Learning and Random Forest Classifier.">
+  <meta name="author" content="AgriPredict AI Team">
+  <title>{% block title %}AgriPredict AI - Smart Crop Recommendation{% endblock %}</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js CDN for visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="{% if current_user %}{{ url_for('dashboard_page') }}{% else %}{{ url_for('login_page') }}{% endif %}" class="brand-logo" id="nav-brand">
+        <div class="brand-icon">🌱</div>
+        <div class="brand-title">AgriPredict <span>AI</span></div>
+      </a>
+
+      <!-- Center Navigation Links -->
+      <ul class="nav-links" id="navLinks">
+        {% if current_user %}
+          <li><a href="{{ url_for('dashboard_page') }}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" id="navDashboard">📊 Dashboard</a></li>
+          <li><a href="{{ url_for('predict_page') }}" class="nav-link {% if active_page == 'predict' %}active{% endif %}" id="navPredict">🌾 Prediction</a></li>
+          <li><a href="{{ url_for('history_page') }}" class="nav-link {% if active_page == 'history' %}active{% endif %}" id="navHistory">📋 History</a></li>
+          <li><a href="{{ url_for('dataset_page') }}" class="nav-link {% if active_page == 'dataset' %}active{% endif %}" id="navDataset">📂 Dataset</a></li>
+          <li><a href="{{ url_for('model_page') }}" class="nav-link {% if active_page == 'model' %}active{% endif %}" id="navModel">🌲 ML Model</a></li>
+          <li><a href="{{ url_for('how_it_works_page') }}" class="nav-link {% if active_page == 'how_it_works' %}active{% endif %}" id="navHow">⚙️ How It Works</a></li>
+          <li><a href="{{ url_for('about_page') }}" class="nav-link {% if active_page == 'about' %}active{% endif %}" id="navAbout">ℹ️ About</a></li>
+          <li>
+            <a href="{{ url_for('profile_page') }}" class="nav-link {% if active_page == 'profile' %}active{% endif %}" id="navProfile" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+              <span style="display: inline-block; width: 22px; height: 22px; border-radius: 50%; background: #15803d; color: #fff; text-align: center; font-size: 0.75rem; line-height: 22px;">{{ current_user.full_name[:1].upper() }}</span>
+              <span>{{ current_user.username }}</span>
+            </a>
+          </li>
+          <li><a href="{{ url_for('logout') }}" class="btn btn-sm btn-outline" style="border-color: #f87171; color: #dc2626;" id="navLogout">🚪 Logout</a></li>
+        {% else %}
+          <li><a href="{{ url_for('login_page') }}" class="nav-link {% if active_page == 'login' %}active{% endif %}">Login</a></li>
+          <li><a href="{{ url_for('signup_page') }}" class="btn btn-sm nav-cta">Get Started Free →</a></li>
+        {% endif %}
+      </ul>
+
+      <!-- Far-Right Header Actions (Prasnnacreates Branding & Mobile Toggle) -->
+      <div class="nav-right-actions">
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="prasnna-brand" title="Created & Designed by Prasnnacreates" id="prasnnaBrandLogo">
+          <div class="prasnna-icon">✨</div>
+          <div class="prasnna-text">Prasnna<span>creates</span></div>
+        </a>
+
+        <button class="mobile-toggle" aria-label="Toggle navigation" id="mobileNavToggle">
+          ☰
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Global Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container" style="margin-top: 20px;">
+        {% for category, message in messages %}
+          <div class="disclaimer-box" style="{% if category == 'error' %}background: #fee2e2; border-color: #fca5a5; color: #991b1b;{% elif category == 'success' %}background: #dcfce7; border-color: #86efac; color: #166534;{% endif %}">
+            <span>{% if category == 'error' %}⚠️{% else %}✅{% endif %}</span>
+            <div>{{ message }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Main Content Block -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Loading State Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 6px;">Analyzing agricultural parameters...</h3>
+    <p style="color: #94a3b8; font-size: 0.9rem;">Running Random Forest Classifier multi-tree inference</p>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <span style="font-size: 1.5rem;">🌱</span>
+            <h3 style="margin: 0;">AgriPredict AI</h3>
+          </div>
+          <p>
+            An intelligent agronomic recommendation platform leveraging machine learning to analyze soil chemistry and local climatic factors for sustainable crop choices.
+          </p>
+          <div style="margin-top: 16px; display: flex; gap: 8px;">
+            <span class="badge badge-green">v2.5 SaaS Suite</span>
+            <span class="badge badge-blue">Scikit-learn RF</span>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            {% if current_user %}
+              <li><a href="{{ url_for('dashboard_page') }}">Dashboard</a></li>
+              <li><a href="{{ url_for('predict_page') }}">Crop Prediction</a></li>
+              <li><a href="{{ url_for('history_page') }}">Prediction History</a></li>
+              <li><a href="{{ url_for('profile_page') }}">My Profile</a></li>
+            {% else %}
+              <li><a href="{{ url_for('login_page') }}">Login</a></li>
+              <li><a href="{{ url_for('signup_page') }}">Create Account</a></li>
+            {% endif %}
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Architecture</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('model_page') }}">Random Forest Model</a></li>
+            <li><a href="{{ url_for('dataset_page') }}">Dataset Analysis</a></li>
+            <li><a href="{{ url_for('how_it_works_page') }}">How It Works</a></li>
+            <li><a href="{{ url_for('about_page') }}">Technology Stack</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Features &amp; Telemetry</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('predict_page') }}">7 Field Parameters</a></li>
+            <li><a href="{{ url_for('dataset_page') }}">22 Target Crops</a></li>
+            <li><a href="{{ url_for('model_page') }}">99.32% Model Accuracy</a></li>
+            <li><a href="{{ url_for('history_page') }}">User History Log</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          &copy; {{ current_year }} AgriPredict AI &bull; Engineered &amp; Designed by <strong>Prasnnacreates</strong>.
+        </div>
+        <div style="max-width: 600px; text-align: right; font-size: 0.775rem;">
+          <strong>Disclaimer:</strong> This application provides data-driven statistical recommendations based on historical agricultural data. It is intended for educational, research, and advisory support and should not be treated as a guarantee of crop yield or substitute for professional soil laboratory testing.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript File -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

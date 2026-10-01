@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction History - AgriPredict AI{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 30px; padding-bottom: 70px;">
+  <div class="page-header" style="text-align: left; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <div class="badge badge-green" style="margin-bottom: 8px;">User Historical Records</div>
+      <h1>Prediction History</h1>
+      <p>All agricultural field tests and crop recommendations generated for <strong>{{ current_user.full_name }}</strong>.</p>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <a href="{{ url_for('predict_page') }}" class="btn btn-primary btn-sm">
+        🌾 New Prediction
+      </a>
+      {% if predictions and predictions|length > 0 %}
+        <form action="{{ url_for('clear_history') }}" method="POST" id="clearHistoryForm" style="display: inline;">
+          <button type="submit" class="btn btn-danger btn-sm" id="clearHistoryBtn">
+            🗑️ Clear My History
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="padding: 28px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+      <h3 class="card-title" style="margin-bottom: 0; border: none; padding: 0;">
+        <span>📋</span> Prediction Logs
+      </h3>
+      <span class="badge badge-blue">{{ predictions|length }} Records Logged</span>
+    </div>
+
+    {% if predictions and predictions|length > 0 %}
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Date &amp; Time</th>
+              <th>Nitrogen (N)</th>
+              <th>Phosphorus (P)</th>
+              <th>Potassium (K)</th>
+              <th>Temperature (°C)</th>
+              <th>Humidity (%)</th>
+              <th>Soil pH</th>
+              <th>Rainfall (mm)</th>
+              <th>Recommended Crop</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in predictions %}
+              <tr>
+                <td>#{{ item.id }}</td>
+                <td style="color: var(--text-muted); font-size: 0.85rem;">{{ item.created_at }}</td>
+                <td>{{ item.nitrogen }}</td>
+                <td>{{ item.phosphorus }}</td>
+                <td>{{ item.potassium }}</td>
+                <td>{{ item.temperature }} °C</td>
+                <td>{{ item.humidity }} %</td>
+                <td>{{ item.ph }}</td>
+                <td>{{ item.rainfall }} mm</td>
+                <td>
+                  <span class="crop-tag">
+                    🌾 {{ item.predicted_crop.capitalize() }}
+                  </span>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+        <div style="font-size: 3.5rem; margin-bottom: 14px;">📭</div>
+        <h4 style="font-size: 1.25rem; color: var(--text-main); margin-bottom: 8px;">No Historical Records Found</h4>
+        <p style="font-size: 0.95rem; margin-bottom: 24px;">You haven't run any crop recommendations yet.</p>
+        <a href="{{ url_for('predict_page') }}" class="btn btn-primary btn-md">
+          Run First Prediction Now →
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div style="margin-top: 24px;">
+    <a href="{{ url_for('dashboard_page') }}" class="btn btn-secondary btn-sm">
+      ← Back to Dashboard
+    </a>
+  </div>
+</div>
+{% endblock %}

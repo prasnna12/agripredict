@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - AgriPredict AI</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body style="margin: 0; padding: 0; background: #ffffff;">
+
+  <div class="auth-split-wrapper">
+    <!-- Left Banner -->
+    <div class="auth-banner">
+      <div class="auth-banner-brand">
+        <div class="brand-icon">🌱</div>
+        <div>AgriPredict <span>AI</span></div>
+      </div>
+
+      <div class="auth-banner-content">
+        <div class="badge badge-green" style="margin-bottom: 16px; background: rgba(74, 222, 128, 0.2); color: #86efac; border: 1px solid rgba(134, 239, 172, 0.3);">
+          ⚡ Precision Agriculture Machine Learning
+        </div>
+        <h1>Intelligent Crop Recommendation Platform</h1>
+        <p>
+          Leveraging trained Random Forest models to evaluate soil chemistry and meteorological conditions for sustainable, high-yield agriculture.
+        </p>
+
+        <ul class="auth-banner-features">
+          <li>
+            <span>✓</span> 7 Agricultural Parameters (N, P, K, pH, Temp, Humidity, Rain)
+          </li>
+          <li>
+            <span>✓</span> 22 Commercial &amp; Food Crop Target Varieties
+          </li>
+          <li>
+            <span>✓</span> Verified 99.32% Model Testing Accuracy
+          </li>
+          <li>
+            <span>✓</span> User-Specific Prediction History &amp; Analytical Telemetry
+          </li>
+        </ul>
+      </div>
+
+      <div class="auth-banner-footer">
+        &copy; {{ current_year }} AgriPredict AI System. Enterprise Grade Agricultural Intelligence.
+      </div>
+    </div>
+
+    <!-- Right Side Login Form -->
+    <div class="auth-form-side" style="position: relative;">
+      <!-- Top-Right Prasnnacreates Branding -->
+      <div style="position: absolute; top: 24px; right: 28px;">
+        <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="prasnna-brand" title="Created & Designed by Prasnnacreates" id="authPrasnnaLogo">
+          <div class="prasnna-icon">✨</div>
+          <div class="prasnna-text">Prasnna<span>creates</span></div>
+        </a>
+      </div>
+
+      <div class="auth-card" style="margin-top: 30px;">
+        <div class="auth-card-header">
+          <div style="font-size: 2rem; margin-bottom: 8px;">👋</div>
+          <h2>Welcome Back</h2>
+          <p>Please enter your credentials to access your agricultural dashboard.</p>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="disclaimer-box" style="margin-bottom: 20px; {% if category == 'error' %}background: #fee2e2; border-color: #fca5a5; color: #991b1b;{% elif category == 'success' %}background: #dcfce7; border-color: #86efac; color: #166534;{% endif %}">
+                <span>{% if category == 'error' %}⚠️{% else %}✅{% endif %}</span>
+                <div>{{ message }}</div>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Quick Demo Account Hint -->
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px 14px; margin-bottom: 20px; font-size: 0.85rem; color: #166534; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <strong>Quick Demo Login:</strong><br>
+            Username: <code>admin</code> | Password: <code>password123</code>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline" style="padding: 4px 8px; font-size: 0.75rem;" onclick="document.getElementById('username_or_email').value='admin'; document.getElementById('password').value='password123';">
+            Autofill Demo
+          </button>
+        </div>
+
+        <form action="{{ url_for('login_post') }}" method="POST">
+          <div class="auth-input-group">
+            <label for="username_or_email">Email / Username</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">👤</span>
+              <input type="text" id="username_or_email" name="username_or_email" class="auth-input" placeholder="Enter email or username" required autofocus>
+            </div>
+          </div>
+
+          <div class="auth-input-group">
+            <label for="password">Password</label>
+            <div class="auth-input-wrapper">
+              <span class="auth-input-icon">🔒</span>
+              <input type="password" id="password" name="password" class="auth-input" placeholder="Enter password" required>
+            </div>
+          </div>
+
+          <div class="auth-extra-row">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--text-muted); font-size: 0.88rem;">
+              <input type="checkbox" name="remember" checked> Remember me
+            </label>
+            <a href="javascript:void(0)" onclick="alert('For project demonstration, you can use the default demo credentials (admin / password123) or register a new account.')" style="color: var(--primary); font-weight: 600; font-size: 0.85rem;">
+              Forgot Password?
+            </a>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="loginBtn">
+            Login to Dashboard →
+          </button>
+        </form>
+
+        <div class="auth-footer-text">
+          Don't have an account? <a href="{{ url_for('signup_page') }}">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

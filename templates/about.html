@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}About - AgriPredict AI{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-bottom: 70px;">
+  <div class="page-header">
+    <div class="badge badge-green" style="margin-bottom: 8px;">About the Initiative</div>
+    <h1>About AgriPredict AI</h1>
+    <p>Bridging machine learning and precision agriculture to provide data-driven crop recommendations for farmers, students, and agronomists.</p>
+  </div>
+
+  <div style="max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px;">
+    <!-- Project Objective -->
+    <div class="card">
+      <h3 class="card-title">
+        <span>🎯</span> Project Objective
+      </h3>
+      <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-main); margin-bottom: 14px;">
+        The primary objective of <strong>AgriPredict AI</strong> is to assist farmers, agricultural consultants, and researchers in identifying the most suitable crop for cultivation based on quantifiable soil chemistry and atmospheric environmental parameters.
+      </p>
+      <p style="font-size: 0.95rem; line-height: 1.7; color: var(--text-muted);">
+        By eliminating guesswork and conventional trial-and-error farming methods, the system utilizes a trained Random Forest ensemble classifier to forecast which crops will flourish under given conditions, helping improve resource allocation and agricultural productivity.
+      </p>
+    </div>
+
+    <!-- Technologies Used -->
+    <div class="card">
+      <h3 class="card-title">
+        <span>💻</span> Technologies &amp; Architecture Stack
+      </h3>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 10px;">
+        <div style="background: var(--surface-alt); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: var(--primary);">Python 3.14</strong>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Underlying core programming runtime for model execution and data manipulation.</p>
+        </div>
+        <div style="background: var(--surface-alt); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: var(--primary);">Flask Framework</strong>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Lightweight, robust Python WSGI web backend serving REST and template endpoints.</p>
+        </div>
+        <div style="background: var(--surface-alt); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: var(--primary);">Scikit-learn</strong>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Machine learning library providing the trained RandomForestClassifier model.</p>
+        </div>
+        <div style="background: var(--surface-alt); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: var(--primary);">Pandas &amp; NumPy</strong>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">High-performance multidimensional matrix operations and tabular schema validation.</p>
+        </div>
+        <div style="background: var(--surface-alt); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: var(--primary);">SQLite Database</strong>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Lightweight serverless transactional database for local prediction logging.</p>
+        </div>
+        <div style="background: var(--surface-alt); padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <strong style="color: var(--primary);">HTML5, Modern CSS, JS</strong>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Responsive, mobile-optimized UI with micro-animations and zero bloated CSS frameworks.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Benefits -->
+    <div class="card">
+      <h3 class="card-title">
+        <span>✨</span> Application Benefits
+      </h3>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 14px; margin-top: 8px;">
+        <li style="display: flex; gap: 12px; align-items: flex-start;">
+          <span style="color: var(--primary); font-size: 1.1rem; flex-shrink: 0;">⚡</span>
+          <div>
+            <strong>Fast &amp; Responsive Prediction:</strong> Immediate crop recommendation delivered within milliseconds with an elegant loading feedback loop.
+          </div>
+        </li>
+        <li style="display: flex; gap: 12px; align-items: flex-start;">
+          <span style="color: var(--primary); font-size: 1.1rem; flex-shrink: 0;">🧪</span>
+          <div>
+            <strong>Easy-to-Use Interface:</strong> Clean form structure with unit indicators, field validation hints, and one-click presets for swift demonstration.
+          </div>
+        </li>
+        <li style="display: flex; gap: 12px; align-items: flex-start;">
+          <span style="color: var(--primary); font-size: 1.1rem; flex-shrink: 0;">📈</span>
+          <div>
+            <strong>Data-Driven Recommendation:</strong> Grounded in empirical agricultural records spanning 22 distinct commercial and nutritional crop varieties.
+          </div>
+        </li>
+        <li style="display: flex; gap: 12px; align-items: flex-start;">
+          <span style="color: var(--primary); font-size: 1.1rem; flex-shrink: 0;">📊</span>
+          <div>
+            <strong>Interactive Dashboard:</strong> Automatic logging of prediction history with SQLite, statistical summaries, and distribution charts.
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Contact & Feedback Section -->
+    <div class="card" id="contact">
+      <h3 class="card-title">
+        <span>📬</span> Contact &amp; Academic Showcase
+      </h3>
+      <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px;">
+        Have suggestions, questions regarding model weights, or interested in deploying AgriPredict AI for your institution or agricultural cooperative?
+      </p>
+
+      <div style="background: var(--surface-alt); padding: 24px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Project Lead</div>
+            <div style="font-size: 1rem; font-weight: 700; color: var(--text-main); margin-top: 4px;">AgriPredict AI Research Team</div>
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Repository &amp; Portfolio</div>
+            <div style="font-size: 0.95rem; color: var(--primary); margin-top: 4px; font-weight: 600;">GitHub Showcase Ready</div>
+          </div>
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">License</div>
+            <div style="font-size: 0.95rem; color: var(--text-main); margin-top: 4px; font-weight: 600;">Open Source Educational License</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
